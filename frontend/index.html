@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>LastPass Vault Analyzer</title>
+</head>
+
+<body>
+    <div id="app" class="d-flex flex-column">
+        <!-- top warning -->
+        <div id="top-warning" class="alert alert-danger m-1 p-3" style="border-radius: 0; border-width: 5px; border-color: #a02b37;">
+            <div class="d-flex align-items-center">
+                <i class="bi-exclamation-triangle me-3" style="font-size: xx-large;"></i>
+                <span><b>WARNING!</b>: you should never! under no circumstances! input your <b>master password</b> here, or anywhere other than the official LastPass website or apps. Doing so, will give away all the information needed to fully decrypt this file and the leaked vault that is now in the hands of the bad guys.</span>
+            </div>
+        </div>
+        <!-- tabs -->
+        <ul class="nav nav-tabs mt-2" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active no-animation" id="url-tab" data-bs-toggle="tab" data-bs-target="#url-tab-pane" type="button" role="tab" aria-controls="url-tab-pane" aria-selected="true">
+                    <i class="bi-globe-americas me-1" style="font-size: small;"></i>
+                    URLs
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link no-animation" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview-tab-pane" type="button" role="tab" aria-controls="overview-tab-pane" aria-selected="false">
+                    <i class="bi-database-exclamation me-1"></i>
+                    Overview
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link no-animation" id="about-tab" data-bs-toggle="tab" data-bs-target="#about-tab-pane" type="button" role="tab" aria-controls="about-tab-pane" aria-selected="false">
+                    <i class="bi-info-circle me-1" style="font-size: small;"></i>
+                    About
+                </button>
+            </li>
+        </ul>
+        <!-- tab content -->
+        <div class="tab-content" id="myTabContent" style="flex-grow: 1; max-width: 100vw;">
+            <!-- URLS -->
+            <div class="tab-pane show active h-100" id="url-tab-pane" role="tabpanel" aria-labelledby="url-tab" tabindex="0">
+                <div id="filter-bar" class="d-flex align-items-center p-2" style="gap: 0.5rem;">
+                    <i class="bi-funnel"></i>
+                    <div>Filter</div>
+                    <input class="input" id="filter" type="text" autocomplete="off" placeholder="type here..." style="width: 20rem;" />
+                    <div class="form-check ms-2">
+                        <input class="form-check-input" type="checkbox" value="" id="flexCheckRegex">
+                        <label class="form-check-label" for="flexCheckRegex">Use Regex</label>
+                    </div>
+                    <div class="ms-4 fst-italic" style="opacity: 0.5;">showing <span id="filter-shown">0</span> (of <span id="filter-total">0</span>) URLs</div>
+                </div>
+                <div id="url-list-container" class="pt-1" style="overflow: auto;">
+                    <div id="url-list" style="user-select: text;"></div>
+                </div>
+                <div id="open-wrapper" class="d-flex align-items-center justify-content-between ms-5 mt-5">
+                    <div class="input-box cursor-hand" id="input" style="display: flex; align-items: center; gap: 1rem; padding: 1rem; border-style: dashed; border-width: 1px; border-radius: 3px;">
+                        <button id="btn" class="btn btn-light">
+                            <i class="bi-folder2-open p-3" style="font-size: xx-large;"></i>
+                        </button>
+                        <div>Open the "Encrypted" LastPass XML Vault</div>
+                    </div>
+                </div>
+            </div>
+            <!-- OVERVIEW -->
+            <div class="tab-pane h-100" id="overview-tab-pane" role="tabpanel" aria-labelledby="overview-tab" tabindex="0">
+                <div class="d-flex flex-column p-4" style="gap: 0.5rem; user-select: text;">
+                    <div>
+                        <i class="bi-link me-2"></i>
+                        CBC (<span class="fst-italic" style="opacity: 0.7;">Cipher Block Chaining</span>) enabled: <b><span id="ov-cbc"></span></b>
+                    </div>
+                    <div>
+                        <i class="bi-dash me-2"></i>
+                        Accounts version: <span id="ov-accounts-version"></span>
+                    </div>
+                    <div>
+                        <i class="bi-globe-americas me-2"></i>
+                        URL count: <span class="fst-italic" style="opacity: 0.5;"><span id="ov-url-total"></span></span>
+                        <div class="ps-4">
+                            <div>
+                                <i class="bi-dash me-2"></i>
+                                Accounts: <span id="ov-accounts"></span>
+                            </div>
+                            <div>
+                                <i class="bi-dash me-2"></i>
+                                Never accounts: <span class="fst-italic" style="opacity: 0.5;"><span id="ov-never-accounts"></span></span>
+                                <div class="ps-4">
+                                    <div>
+                                        <i class="bi-dash me-2"></i>
+                                        Never autologin: <span id="ov-n-auto-login"></span>
+                                    </div>
+                                    <div>
+                                        <i class="bi-dash me-2"></i>
+                                        Never account: <span id="ov-n-account"></span>
+                                    </div>
+                                    <div>
+                                        <i class="bi-dash me-2"></i>
+                                        Never generate: <span id="ov-n-generate"></span>
+                                    </div>
+                                    <div>
+                                        <i class="bi-dash me-2"></i>
+                                        Never show icons: <span id="ov-n-show-icons"></span>
+                                    </div>
+                                    <div>
+                                        <i class="bi-dash me-2"></i>
+                                        Never form fill: <span id="ov-n-form-fill"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <i class="bi-dash me-2"></i>
+                                Equivalent domains: <span id="ov-eq-domains"></span>
+                            </div>
+                            <div>
+                                <i class="bi-dash me-2"></i>
+                                URL rules: <span id="ov-url-rules"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="alert alert-warning mx-4">
+                    <div class="d-flex align-items-center">
+                        <i class="bi-info-circle me-3" style="font-size: xx-large;"></i>
+                        <span><b>NOTE:</b> the fact that some information is not present in this data dump (ex: pbkdf2 iteration count) does not mean that said data is not in the leaked vaults.
+                        This is just an XML generated by the REST API of LastPass from the <b>full</b> vault they have stored on their servers.</span>
+                    </div>
+                </div>
+            </div>
+            <!-- ABOUT -->
+            <div class="tab-pane h-100" id="about-tab-pane" role="tabpanel" aria-labelledby="about-tab" tabindex="0">
+                <div class="d-flex m-5 flex-column" style="gap: 0.5rem; user-select: text;">
+                    <img id="logo" class="logo">
+                    <div>LastPass Vault Analyzer v0.1.0</div>
+                    <div>
+                        <a href="https://github.com/omega32/lastpass-vault-analyzer" style="color: white;">https://github.com/omega32/lastpass-vault-analyzer</a>
+                    </div>
+                    <div>
+                        <a href="https://github.com/omega32" style="color: white;">Alejandro Gonzalez ©2023</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="./src/main.js" type="module"></script>
+</body>
+
+</html>
