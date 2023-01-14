@@ -34,6 +34,13 @@ func (a *App) makeMenu() *menu.Menu {
 			runtime.EventsEmit(a.ctx, "open")
 		},
 	})
+	FileMenu.Append(&menu.MenuItem{
+		Label: "Paste from clipboard",
+		Type:  menu.TextType,
+		Click: func(cd *menu.CallbackData) {
+			runtime.EventsEmit(a.ctx, "paste")
+		},
+	})
 	return AppMenu
 }
 

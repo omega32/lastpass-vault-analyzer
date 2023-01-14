@@ -9,13 +9,15 @@ import * as app from '../wailsjs/go/main/App';
 import { XMLParser } from 'fast-xml-parser';
 import _ from 'lodash';
 import toastr from 'toastr';
-import { BrowserOpenURL, EventsOn } from '../wailsjs/runtime/runtime';
+import * as runtime from '../wailsjs/runtime/runtime';
 import * as bootstrap from 'bootstrap'; // imported so that tabs coded directly on the HTML can work
 
 const appNode = /** @type {HTMLDivElement} */(document.getElementById("app"));
 const filterURLElement = /** @type {HTMLInputElement} */(appNode.querySelector("#filter"));
 const openPanel = /** @type {HTMLElement} */(document.querySelector("#open-wrapper"));
 const openPanelInput = /** @type {HTMLElement} */(openPanel.querySelector("#input"));
+const pastePanel = /** @type {HTMLElement} */(document.querySelector("#paste-wrapper"));
+const pastePanelInput = /** @type {HTMLElement} */(pastePanel.querySelector("#input"));
 const urlList = /** @type {HTMLElement} */(appNode.querySelector("#url-list"));
 const checkBoxRegex = /** @type {HTMLInputElement} */(appNode.querySelector("#flexCheckRegex"));
 const tabContentContainer = /** @type {HTMLElement} */(appNode.querySelector('#myTabContent'));
@@ -176,27 +178,55 @@ const clearURLs = function () {
 const clear = function () {
     clearURLs();
     clearOverview();
-    showOpenPanel();
+};
+
+/**
+ * @param {string} xml
+ */
+const loadXML = function (xml) {
+    const json = /** @type {LastPassXMLVault} */(parser.parse(xml));
+    if (json?.response) {
+        clear();
+        renderVault(json);
+        resetFilter();
+        hideOpenPanel();
+    } else {
+        toastr.error("Error loading XML vault<br/>Invalid format");
+        showOpenPanel();
+    }
 };
 
 const openFile = async function () {
     const file = await app.OpenVault();
     if (file) {
-        clearURLs();
         const xml = await app.LoadTextFile(file);
-        const json = /** @type {LastPassXMLVault} */(parser.parse(xml));
-        if (json?.response) {
-            renderVault(json);
-            resetFilter();
-            hideOpenPanel();
+        loadXML(xml);
+    }
+};
+
+const pasteFromClipboard = async function () {
+    try {
+        const text = await runtime.ClipboardGetText();
+        if (text) {
+            loadXML(text);
         } else {
-            toastr.error("Error loading XML vault");
+            toastr.info("Clipboard is empty");
+        }
+    } catch (e) {
+        if (/successfully/i.test(e)) {
+            toastr.info("The clipboard is empty");
+        } else {
+            toastr.error("Error loading clipboard");
         }
     }
 };
 
 openPanelInput.onclick = () => {
     openFile();
+};
+
+pastePanelInput.onclick = () => {
+    pasteFromClipboard();
 };
 
 /**
@@ -278,7 +308,7 @@ checkBoxRegex.checked = false;
 appNode.querySelectorAll('a').forEach(a => {
     a.onclick = function (e) {
         e.preventDefault();
-        BrowserOpenURL(a.href);
+        runtime.BrowserOpenURL(a.href);
     };
 });
 
@@ -318,6 +348,10 @@ window["toggleUrlDetails"] = function (btn) {
     urlNode.dataset["details"] = detailsShown ? "0" : "1";
 };
 
-EventsOn("open", () => {
+runtime.EventsOn("open", () => {
     openFile();
+});
+
+runtime.EventsOn("paste", () => {
+    pasteFromClipboard();
 });

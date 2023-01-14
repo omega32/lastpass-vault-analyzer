@@ -51,15 +51,26 @@
                     </div>
                     <div class="ms-4 fst-italic" style="opacity: 0.5;">showing <span id="filter-shown">0</span> (of <span id="filter-total">0</span>) URLs</div>
                 </div>
+                <!-- URL List -->
                 <div id="url-list-container" class="pt-1" style="overflow: auto;">
                     <div id="url-list" style="user-select: text;"></div>
                 </div>
-                <div id="open-wrapper" class="d-flex align-items-center justify-content-between ms-5 mt-5">
+                <!-- Open -->
+                <div id="open-wrapper" class="d-flex align-items-center justify-content-between ms-5 mt-5 action-wrapper">
                     <div class="input-box cursor-hand" id="input" style="display: flex; align-items: center; gap: 1rem; padding: 1rem; border-style: dashed; border-width: 1px; border-radius: 3px;">
-                        <button id="btn" class="btn btn-light">
+                        <button id="btn" class="btn btn-light" style="pointer-events: none;">
                             <i class="bi-folder2-open p-3" style="font-size: xx-large;"></i>
                         </button>
                         <div>Open the "Encrypted" LastPass XML Vault</div>
+                    </div>
+                </div>
+				<!-- Paste -->
+                <div id="paste-wrapper" class="d-flex align-items-center justify-content-between ms-5 mt-5 action-wrapper">
+                    <div class="input-box cursor-hand" id="input" style="display: flex; align-items: center; gap: 1rem; padding: 1rem; border-style: dashed; border-width: 1px; border-radius: 3px;">
+                        <button id="btn" class="btn btn-light" style="pointer-events: none;">
+                            <i class="bi-clipboard p-3" style="font-size: xx-large;"></i>
+                        </button>
+                        <div>Paste vault from clipboard</div>
                     </div>
                 </div>
             </div>

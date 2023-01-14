@@ -41,6 +41,9 @@
     overflow: auto;
 }
 
-#open-wrapper #input:hover {
+.action-wrapper #input {
+    min-width: 29rem;
+}
+.action-wrapper #input:hover {
     background-color: #ffffff1c;
 }
