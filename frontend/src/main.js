@@ -5,16 +5,17 @@ import './style.css';
 import './app.css';
 
 import logo from './assets/images/logo.png';
-import { OpenVault, LoadTextFile } from '../wailsjs/go/main/App';
+import * as app from '../wailsjs/go/main/App';
 import { XMLParser } from 'fast-xml-parser';
 import _ from 'lodash';
 import toastr from 'toastr';
-import { BrowserOpenURL } from '../wailsjs/runtime/runtime';
-import * as bootstrap from 'bootstrap';
+import { BrowserOpenURL, EventsOn } from '../wailsjs/runtime/runtime';
+import * as bootstrap from 'bootstrap'; // imported so that tabs coded directly on the HTML can work
 
 const appNode = /** @type {HTMLDivElement} */(document.getElementById("app"));
 const filterURLElement = /** @type {HTMLInputElement} */(appNode.querySelector("#filter"));
-const openPanel = /** @type {HTMLButtonElement} */(document.querySelector("#open-wrapper #input"));
+const openPanel = /** @type {HTMLElement} */(document.querySelector("#open-wrapper"));
+const openPanelInput = /** @type {HTMLElement} */(openPanel.querySelector("#input"));
 const urlList = /** @type {HTMLElement} */(appNode.querySelector("#url-list"));
 const checkBoxRegex = /** @type {HTMLInputElement} */(appNode.querySelector("#flexCheckRegex"));
 const tabContentContainer = /** @type {HTMLElement} */(appNode.querySelector('#myTabContent'));
@@ -154,20 +155,48 @@ const renderVault = function (vault) {
     fillOverview(vault);
 };
 
-openPanel.onclick = async function () {
-    const file = await OpenVault();
+const hideOpenPanel = function () {
+    openPanel.classList.add('d-none');
+};
+
+const showOpenPanel = function () {
+    openPanel.classList.remove('d-none');
+};
+
+const clearOverview = function () {
+    overviewTabPane.querySelectorAll('[id^="ov-"]').forEach(e => {
+        /** @type {HTMLElement} */(e).textContent = '';
+    });
+};
+
+const clearURLs = function () {
+    urlList.innerHTML = '';
+};
+
+const clear = function () {
+    clearURLs();
+    clearOverview();
+    showOpenPanel();
+};
+
+const openFile = async function () {
+    const file = await app.OpenVault();
     if (file) {
-        urlList.innerHTML = '';
-        const xml = await LoadTextFile(file);
+        clearURLs();
+        const xml = await app.LoadTextFile(file);
         const json = /** @type {LastPassXMLVault} */(parser.parse(xml));
         if (json?.response) {
             renderVault(json);
             resetFilter();
-            openPanel.parentElement.remove();
+            hideOpenPanel();
         } else {
             toastr.error("Error loading XML vault");
         }
     }
+};
+
+openPanelInput.onclick = () => {
+    openFile();
 };
 
 /**
@@ -288,3 +317,7 @@ window["toggleUrlDetails"] = function (btn) {
     }
     urlNode.dataset["details"] = detailsShown ? "0" : "1";
 };
+
+EventsOn("open", () => {
+    openFile();
+});

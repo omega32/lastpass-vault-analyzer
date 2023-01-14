@@ -54,5 +54,7 @@ wails build
 ## RESOURCES
 
 - [Security Now 904: Leaving LastPass - How LastPass failed, Steve's next password manager, how to protect yourself](https://www.youtube.com/watch?v=GE7iUgfw8vI) 🎥
-- [Security Now 904 show notes](https://www.grc.com/sn/SN-904-Notes.pdf) 🎥
+- [Security Now 904 show notes](https://www.grc.com/sn/SN-904-Notes.pdf)
 - [Ask The Tech Guys: Moving Your Passwords from LastPass](https://www.youtube.com/watch?v=c50T7X4x-7g) 🎥
+- [Security Now 905: 1 - LastPass Aftermath, LastPass vault de-obfuscator, LastPass iteration count folly](https://www.youtube.com/watch?v=fTtUhluQiIk) 🎥
+- [Security Now 905 show notes](https://www.grc.com/sn/SN-905-Notes.pdf)

@@ -4,6 +4,7 @@ import (
 	"context"
 	"os"
 
+	"github.com/wailsapp/wails/v2/pkg/menu"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
@@ -21,6 +22,19 @@ func NewApp() *App {
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
+}
+
+func (a *App) makeMenu() *menu.Menu {
+	AppMenu := menu.NewMenu()
+	FileMenu := AppMenu.AddSubmenu("File")
+	FileMenu.Append(&menu.MenuItem{
+		Label: "Open XML file",
+		Type:  menu.TextType,
+		Click: func(cd *menu.CallbackData) {
+			runtime.EventsEmit(a.ctx, "open")
+		},
+	})
+	return AppMenu
 }
 
 func (a *App) OpenVault() string {
