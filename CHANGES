@@ -2,9 +2,9 @@
 
 ### Releases from [omega32/lastpass-vault-analyzer](https://github.com/omega32/lastpass-vault-analyzer)
 
-#### v0.1.1 (not released yet)
+#### v0.1.1
 
-- New: main menu. To allow loading a files, even after one has been loaded.
+- New: main menu. To allow loading files, even after one has been loaded.
 - New: add option to paste the vault contents from clipboard.
 
 #### v0.1.0
